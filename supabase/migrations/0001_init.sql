@@ -85,6 +85,11 @@ create policy "lire les paniers de mes boutiques" on public.checkouts
   );
 -- shop_secrets : aucune règle = aucun accès depuis le navigateur.
 
+-- Droits explicites (les règles ci-dessus filtrent ensuite ligne par ligne)
+revoke all on public.subscriptions, public.shops, public.shop_secrets, public.checkouts from anon, authenticated;
+grant select on public.subscriptions, public.shops, public.checkouts to authenticated;
+grant all on public.subscriptions, public.shops, public.shop_secrets, public.checkouts to service_role;
+
 -- Utilisé par la page de connexion (serveur uniquement) : ce compte existe-t-il ?
 create function public.user_exists(p_email text) returns boolean
 language sql security definer set search_path = '' as $$
