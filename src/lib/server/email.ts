@@ -23,10 +23,24 @@ function block(label: string, e: Email) {
 <pre style="white-space:pre-wrap;font:15px/1.6 system-ui,sans-serif;background:#f6f2ea;padding:14px;border-radius:8px;margin:0">${esc(e.body)}</pre>`;
 }
 
-export function planEmailHtml(a: Answers, plan: PlanId) {
+function button(href: string, label: string) {
+  return `<p style="margin:20px 0"><a href="${esc(href)}" style="display:inline-block;background:#d9541e;color:#fff;text-decoration:none;font-weight:600;padding:14px 22px;border-radius:8px">${esc(label)}</a></p>`;
+}
+
+export function loginEmailHtml(link: string) {
+  return `<div style="max-width:560px;margin:0 auto;font:15px/1.6 system-ui,sans-serif;color:#1b1d1a">
+<p style="font:800 22px Georgia,serif;color:#1f3d2b">Ton lien de connexion</p>
+<p>Appuie sur le bouton pour ouvrir ton espace Panier Perdu. Le lien est valable une heure et ne sert qu'une fois.</p>
+${button(link, "Ouvrir mon espace")}
+<p style="color:#5f625b;font-size:13px">Tu n'as rien demandé ? Ignore simplement cet email.</p>
+</div>`;
+}
+
+export function planEmailHtml(a: Answers, plan: PlanId, loginLink?: string) {
   return `<div style="max-width:560px;margin:0 auto;font:15px/1.6 system-ui,sans-serif;color:#1b1d1a">
 <p style="font:800 22px Georgia,serif;color:#1f3d2b">Ton plan Panier Perdu est prêt.</p>
 <p>Merci, ton abonnement <b>${esc(PLANS[plan].name)}</b> est actif. Voici ton plan complet. Tu peux le coller dès aujourd'hui dans Shopify : Marketing → Automatisations → « Panier abandonné ».</p>
+${loginLink ? `${button(loginLink, "Ouvrir mon espace")}<p style="margin-top:-8px;color:#5f625b;font-size:13px">Lien valable une heure. Ensuite, reconnecte-toi depuis la page Connexion du site.</p>` : ""}
 ${block("Relance 1", relance1(a))}
 ${block("Relance 2, avec code de réduction", relance2(a))}
 <p style="margin:10px 0 0;color:#5f625b;font-size:13px">Crée le code RETOUR10 dans Shopify (Remises → Créer une remise), 10 %, valable 48 h, un usage par client.</p>

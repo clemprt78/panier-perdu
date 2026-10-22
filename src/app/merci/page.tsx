@@ -68,7 +68,8 @@ async function Delivery({ searchParams }: { searchParams: PageProps<"/merci">["s
       <h1 className="mt-3 font-display text-[1.9rem] leading-tight font-extrabold">C&apos;est fait. Ton plan est à toi.</h1>
       <p className="mt-3 leading-relaxed">
         {data ? `Formule ${PLANS[data.plan].name}. ` : ""}
-        Une copie complète part {email ? <>à <b>{email}</b></> : "par email"}. La voici aussi, tout de suite.
+        Une copie complète part {email ? <>à <b>{email}</b></> : "par email"}, avec le lien vers ton espace client.
+        La voici aussi, tout de suite.
       </p>
 
       {data && (
