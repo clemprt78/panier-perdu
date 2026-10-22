@@ -68,6 +68,7 @@ type AbandonedNode = {
   abandonedCheckoutUrl: string;
   customer: { email: string | null; firstName: string | null } | null;
   totalPriceSet: { shopMoney: { amount: string; currencyCode: string } };
+  lineItems: { nodes: { title: string; quantity: number }[] };
 };
 
 const ABANDONED_QUERY = `
@@ -81,6 +82,7 @@ query Abandoned($q: String!, $after: String) {
       abandonedCheckoutUrl
       customer { email firstName }
       totalPriceSet { shopMoney { amount currencyCode } }
+      lineItems(first: 5) { nodes { title quantity } }
     }
   }
 }`;
@@ -121,6 +123,7 @@ export async function syncAbandonedCheckouts(shopId: string) {
         currency: n.totalPriceSet.shopMoney.currencyCode,
         recovery_url: n.abandonedCheckoutUrl,
         abandoned_at: n.createdAt,
+        items: n.lineItems.nodes.map((l) => `${l.quantity} × ${l.title}`).join("\n").slice(0, 1000) || null,
       });
     }
     if (!data.abandonedCheckouts.pageInfo.hasNextPage) break;
@@ -164,4 +167,47 @@ export async function fillShopName(shopId: string, domain: string, token: string
     .from("shops")
     .update({ name, relance1_body: swap(row.relance1_body), relance2_body: swap(row.relance2_body) })
     .eq("id", shopId);
+}
+
+// Le client a-t-il passé commande depuis cette date ? (relance inutile, ou panier récupéré)
+export async function findOrderSince(domain: string, token: string, email: string, sinceIso: string) {
+  const safeEmail = email.replace(/["\\\s]/g, "");
+  const data = await shopifyGraphql<{
+    orders: { nodes: { id: string; createdAt: string; totalPriceSet: { shopMoney: { amount: string } } }[] };
+  }>(
+    domain,
+    token,
+    `query O($q: String!) { orders(first: 1, query: $q, sortKey: CREATED_AT) { nodes { id createdAt totalPriceSet { shopMoney { amount } } } } }`,
+    { q: `email:"${safeEmail}" created_at:>='${sinceIso}'` },
+  );
+  const o = data.orders.nodes[0];
+  return o ? { id: o.id, createdAt: o.createdAt, cents: Math.round(Number(o.totalPriceSet.shopMoney.amount) * 100) } : null;
+}
+
+// Crée un code de réduction à usage unique, valable quelques heures.
+export async function createDiscountCode(domain: string, token: string, code: string, percent: number, hours: number) {
+  const now = new Date();
+  const base = {
+    title: `Panier Perdu – ${code}`,
+    code,
+    startsAt: now.toISOString(),
+    endsAt: new Date(now.getTime() + hours * 3600 * 1000).toISOString(),
+    customerGets: { value: { percentage: percent / 100 }, items: { all: true } },
+    appliesOncePerCustomer: true,
+    usageLimit: 1,
+  };
+  const mutation = `mutation C($d: DiscountCodeBasicInput!) {
+    discountCodeBasicCreate(basicCodeDiscount: $d) { codeDiscountNode { id } userErrors { field message } }
+  }`;
+  type R = { discountCodeBasicCreate: { codeDiscountNode: { id: string } | null; userErrors: { message: string }[] } };
+  try {
+    const r = await shopifyGraphql<R>(domain, token, mutation, { d: { ...base, customerSelection: { all: true } } });
+    if (r.discountCodeBasicCreate.codeDiscountNode) return code;
+    throw new Error(JSON.stringify(r.discountCodeBasicCreate.userErrors));
+  } catch (first) {
+    // Versions récentes de l'API : « context » remplace « customerSelection ».
+    const r = await shopifyGraphql<R>(domain, token, mutation, { d: { ...base, context: { all: "ALL" } } });
+    if (r.discountCodeBasicCreate.codeDiscountNode) return code;
+    throw new Error(`Code non créé : ${String(first)} / ${JSON.stringify(r.discountCodeBasicCreate.userErrors)}`);
+  }
 }

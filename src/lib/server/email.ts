@@ -60,7 +60,7 @@ export async function sendEmail(to: string, subject: string, html: string) {
     console.warn("RESEND_API_KEY manquante : email non envoyé à", to);
     return;
   }
-  const from = process.env.EMAIL_FROM || "Panier Perdu <onboarding@resend.dev>";
+  const from = process.env.EMAIL_FROM || "Panier Perdu <bonjour@panier-perdu.com>";
   const { error } = await new Resend(key).emails.send({
     from,
     to,
