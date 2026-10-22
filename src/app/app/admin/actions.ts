@@ -77,13 +77,24 @@ export async function registerShopifyApp(_: AdminState, form: FormData): Promise
   const login = await loginLinkFor(parsed.data.email, false);
   if (!login) return { error: "Aucun client avec cet email. Crée-le d'abord." };
 
-  const { error } = await db.from("shopify_apps").insert({
-    label: parsed.data.email,
-    client_id: parsed.data.clientId,
-    client_secret: parsed.data.clientSecret,
-    user_id: login.userId,
-  });
-  if (error) return { error: error.code === "23505" ? "Ce Client ID est déjà enregistré." : error.message };
+  // Même Client ID déjà enregistré : on met à jour le secret (ex. après un renouvellement).
+  const { data: existing } = await db.from("shopify_apps").select("id").eq("client_id", parsed.data.clientId).maybeSingle();
+  const { error } = existing
+    ? await db
+        .from("shopify_apps")
+        .update({ client_secret: parsed.data.clientSecret, user_id: login.userId, label: parsed.data.email })
+        .eq("id", existing.id)
+    : await db.from("shopify_apps").insert({
+        label: parsed.data.email,
+        client_id: parsed.data.clientId,
+        client_secret: parsed.data.clientSecret,
+        user_id: login.userId,
+      });
+  if (error) return { error: error.message };
   revalidatePath("/app/admin");
-  return { ok: "Application enregistrée. Ses deux adresses sont dans la liste ci-dessous." };
+  return {
+    ok: existing
+      ? "Secret mis à jour. Les adresses de l'application ne changent pas."
+      : "Application enregistrée. Ses deux adresses sont dans la liste ci-dessous.",
+  };
 }
