@@ -184,9 +184,9 @@ export default function Scrolly() {
                         Un client part sans payer ? Panier Perdu lui envoie <b>deux emails automatiques</b>. Il revient,
                         tu encaisses.
                       </p>
-                      <ul className="mt-4 flex flex-wrap gap-2 text-[0.78rem] font-semibold sm:text-sm" style={{ color: st.text }}>
-                        {["Sans engagement", "Satisfait ou remboursé 30 jours", "Prêt en 10 min"].map((t) => (
-                          <li key={t} className="rounded-full bg-white/60 px-3 py-1 backdrop-blur-sm">
+                      <ul className="mt-4 flex flex-wrap gap-1.5 text-[0.74rem] font-semibold sm:gap-2 sm:text-sm" style={{ color: st.text }}>
+                        {["Sans engagement", "Remboursé 30 jours", "Prêt en 10 min"].map((t) => (
+                          <li key={t} className="rounded-full bg-white/60 px-2.5 py-1 backdrop-blur-sm">
                             ✓ {t}
                           </li>
                         ))}
