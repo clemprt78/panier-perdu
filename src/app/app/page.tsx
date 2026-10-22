@@ -6,7 +6,6 @@ import { EmailCard } from "@/app/diagnostic/Funnel";
 import { LAUNCH_DATE_LABEL, PLANS, euros, type PlanId } from "@/lib/diagnostic";
 import { supabaseUser } from "@/lib/server/supabase";
 import { requireOwner } from "@/lib/server/owner";
-import { signOut, syncNow } from "./actions";
 
 const SHOPIFY_MSG: Record<string, { ok: boolean; text: string }> = {
   ok: { ok: true, text: "Ta boutique est branchée. Les paniers abandonnés des 14 derniers jours sont listés ci-dessous." },
@@ -27,7 +26,7 @@ export default function AppPage({ searchParams }: PageProps<"/app">) {
           <Link href="/app" className="font-display text-lg font-semibold text-bottle py-2">
             Panier Perdu
           </Link>
-          <form action={signOut}>
+          <form method="post" action="/auth/deconnexion">
             <button className="py-2 pl-4 text-sm text-muted underline underline-offset-4">Se déconnecter</button>
           </form>
         </header>
@@ -41,7 +40,20 @@ export default function AppPage({ searchParams }: PageProps<"/app">) {
 
 async function Dashboard({ searchParams }: { searchParams: PageProps<"/app">["searchParams"] }) {
   const sp = await searchParams;
-  const msg = typeof sp.shopify === "string" ? SHOPIFY_MSG[sp.shopify] : undefined;
+  const n = Number(typeof sp.n === "string" ? sp.n : 0) || 0;
+  const SYNC_MSG: Record<string, { ok: boolean; text: string }> = {
+    ok: {
+      ok: true,
+      text: n
+        ? `C'est à jour : ${n} panier${n > 1 ? "s" : ""} avec email sur les 14 derniers jours.`
+        : "C'est à jour : aucun nouveau panier abandonné.",
+    },
+    erreur: { ok: false, text: "Shopify n'a pas répondu. Réessaie dans une minute." },
+    nonbranchee: { ok: false, text: "Ta boutique n'est pas encore branchée." },
+  };
+  const msg =
+    (typeof sp.shopify === "string" ? SHOPIFY_MSG[sp.shopify] : undefined) ??
+    (typeof sp.sync === "string" ? SYNC_MSG[sp.sync] : undefined);
   const supabase = await supabaseUser();
   const {
     data: { user },
@@ -84,9 +96,9 @@ async function Dashboard({ searchParams }: { searchParams: PageProps<"/app">["se
   return (
     <>
       {isOwner && (
-        <Link href="/app/admin" className="mt-4 inline-block rounded bg-ink px-3 py-2 text-sm font-semibold text-white">
+        <a href="/app/admin" className="mt-4 inline-block rounded bg-ink px-3 py-2 text-sm font-semibold text-white">
           Administration
-        </Link>
+        </a>
       )}
       {msg && (
         <p
@@ -148,8 +160,8 @@ async function Dashboard({ searchParams }: { searchParams: PageProps<"/app">["se
         <section className="mt-8">
           <div className="flex items-baseline justify-between gap-3">
             <h2 className="font-semibold text-lg">Paniers abandonnés</h2>
-            <form action={syncNow}>
-              <button className="py-2 text-sm text-bottle underline underline-offset-4">Actualiser</button>
+            <form method="post" action="/api/shopify/sync">
+              <button className="py-2 pl-4 text-sm font-medium text-bottle underline underline-offset-4">Actualiser</button>
             </form>
           </div>
           {shop.last_synced_at && (

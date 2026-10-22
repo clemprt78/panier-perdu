@@ -18,9 +18,9 @@ export default function AdminPage() {
           <Link href="/app" className="font-display text-lg font-semibold text-bottle py-2">
             Panier Perdu
           </Link>
-          <Link href="/app" className="py-2 pl-4 text-sm text-muted underline underline-offset-4">
+          <a href="/app" className="py-2 pl-4 text-sm text-muted underline underline-offset-4">
             Mon espace
-          </Link>
+          </a>
         </header>
         <Suspense fallback={<p className="mt-10 text-muted">Chargement…</p>}>
           <Admin />
