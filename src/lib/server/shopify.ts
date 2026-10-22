@@ -142,3 +142,23 @@ export async function syncAbandonedCheckouts(shopId: string) {
   await db.from("shops").update({ last_synced_at: new Date().toISOString() }).eq("id", shop.id);
   return { found: rows.length };
 }
+
+// Si le client n'a pas donné le nom de sa boutique, on prend celui de Shopify
+// et on remplace la formule générique « notre boutique » dans ses relances.
+export async function fillShopName(shopId: string, domain: string, token: string) {
+  const db = supabaseAdmin();
+  const { data: row } = await db
+    .from("shops")
+    .select("name,relance1_body,relance2_body")
+    .eq("id", shopId)
+    .single();
+  if (!row || row.name) return;
+  const data = await shopifyGraphql<{ shop: { name: string } }>(domain, token, `{ shop { name } }`);
+  const name = data.shop.name.trim().slice(0, 40);
+  if (!name) return;
+  const swap = (t: string) => t.replaceAll("notre boutique", name);
+  await db
+    .from("shops")
+    .update({ name, relance1_body: swap(row.relance1_body), relance2_body: swap(row.relance2_body) })
+    .eq("id", shopId);
+}

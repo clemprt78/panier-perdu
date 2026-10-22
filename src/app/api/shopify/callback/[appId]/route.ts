@@ -1,5 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { exchangeCode, getApp, syncAbandonedCheckouts, validShop, verifyShopifyHmac } from "@/lib/server/shopify";
+import {
+  exchangeCode,
+  fillShopName,
+  getApp,
+  syncAbandonedCheckouts,
+  validShop,
+  verifyShopifyHmac,
+} from "@/lib/server/shopify";
 import { supabaseAdmin, supabaseUser } from "@/lib/server/supabase";
 import { relance1, relance2 } from "@/lib/diagnostic";
 
@@ -77,6 +84,11 @@ export async function GET(request: NextRequest, ctx: RouteContext<"/api/shopify/
     updated_at: new Date().toISOString(),
   });
 
+  try {
+    await fillShopName(shopId!, shop, token.access_token);
+  } catch (e) {
+    console.error("shop name", e);
+  }
   try {
     await syncAbandonedCheckouts(shopId!);
   } catch (e) {
