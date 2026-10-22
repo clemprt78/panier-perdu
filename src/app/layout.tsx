@@ -14,6 +14,12 @@ const fraunces = localFont({
   ],
 });
 
+const anton = localFont({
+  variable: "--font-anton",
+  display: "swap",
+  src: [{ path: "../fonts/anton-latin-400-normal.woff2", weight: "400" }],
+});
+
 const plex = localFont({
   variable: "--font-plex",
   display: "swap",
@@ -49,7 +55,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr" className={`${fraunces.variable} ${plex.variable} antialiased`}>
+    <html lang="fr" className={`${fraunces.variable} ${plex.variable} ${anton.variable} antialiased`}>
       <body className="min-h-dvh flex flex-col">
         {children}
         <Analytics />
