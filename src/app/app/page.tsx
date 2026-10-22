@@ -5,11 +5,21 @@ import { Suspense } from "react";
 import { EmailCard } from "@/app/diagnostic/Funnel";
 import { LAUNCH_DATE_LABEL, PLANS, euros, type PlanId } from "@/lib/diagnostic";
 import { supabaseUser } from "@/lib/server/supabase";
-import { signOut } from "./actions";
+import { requireOwner } from "@/lib/server/owner";
+import { signOut, syncNow } from "./actions";
+
+const SHOPIFY_MSG: Record<string, { ok: boolean; text: string }> = {
+  ok: { ok: true, text: "Ta boutique est branchée. Les paniers abandonnés des 14 derniers jours sont listés ci-dessous." },
+  invalide: { ok: false, text: "Le lien de branchement est invalide. Recommence depuis Shopify." },
+  signature: { ok: false, text: "La réponse de Shopify n'a pas pu être vérifiée. Recommence." },
+  expire: { ok: false, text: "Le branchement a pris trop de temps. Recommence depuis Shopify." },
+  refus: { ok: false, text: "Shopify a refusé l'accès. Vérifie l'application puis recommence." },
+  deja: { ok: false, text: "Cette boutique est déjà reliée à un autre compte. Écris-nous." },
+};
 
 export const metadata: Metadata = { title: "Mon espace", robots: { index: false } };
 
-export default function AppPage() {
+export default function AppPage({ searchParams }: PageProps<"/app">) {
   return (
     <main className="flex-1 px-4 pt-5 pb-12">
       <div className="mx-auto max-w-2xl">
@@ -22,14 +32,16 @@ export default function AppPage() {
           </form>
         </header>
         <Suspense fallback={<p className="mt-10 text-muted">Chargement de ton espace…</p>}>
-          <Dashboard />
+          <Dashboard searchParams={searchParams} />
         </Suspense>
       </div>
     </main>
   );
 }
 
-async function Dashboard() {
+async function Dashboard({ searchParams }: { searchParams: PageProps<"/app">["searchParams"] }) {
+  const sp = await searchParams;
+  const msg = typeof sp.shopify === "string" ? SHOPIFY_MSG[sp.shopify] : undefined;
   const supabase = await supabaseUser();
   const {
     data: { user },
@@ -58,9 +70,32 @@ async function Dashboard() {
   }
 
   const active = sub && ["active", "trialing"].includes(sub.status);
+  const isOwner = Boolean(await requireOwner());
+
+  const { data: carts } = shop?.shopify_domain
+    ? await supabase
+        .from("checkouts")
+        .select("id,email,first_name,total_cents,currency,abandoned_at,status")
+        .eq("shop_id", shop.id)
+        .order("abandoned_at", { ascending: false })
+        .limit(20)
+    : { data: null };
 
   return (
     <>
+      {isOwner && (
+        <Link href="/app/admin" className="mt-4 inline-block rounded bg-ink px-3 py-2 text-sm font-semibold text-white">
+          Administration
+        </Link>
+      )}
+      {msg && (
+        <p
+          role="status"
+          className={`mt-4 rounded-lg border-2 bg-white p-3 text-sm ${msg.ok ? "border-bottle" : "border-brick"}`}
+        >
+          {msg.text}
+        </p>
+      )}
       <section className="mt-6">
         <p className="text-sm text-muted">{user.email}</p>
         <h1 className="mt-1 font-display text-[1.9rem] font-extrabold leading-tight">
@@ -109,6 +144,50 @@ async function Dashboard() {
         </ol>
       </section>
 
+      {shop?.shopify_domain && (
+        <section className="mt-8">
+          <div className="flex items-baseline justify-between gap-3">
+            <h2 className="font-semibold text-lg">Paniers abandonnés</h2>
+            <form action={syncNow}>
+              <button className="py-2 text-sm text-bottle underline underline-offset-4">Actualiser</button>
+            </form>
+          </div>
+          {shop.last_synced_at && (
+            <p className="text-xs text-muted">
+              Mis à jour le{" "}
+              {new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short", timeZone: "Europe/Paris" }).format(
+                new Date(shop.last_synced_at),
+              )}
+            </p>
+          )}
+          {!carts?.length ? (
+            <p className="mt-3 rounded-lg border border-line bg-white p-4 text-sm leading-relaxed text-muted">
+              Aucun panier abandonné avec email sur les 14 derniers jours. Shopify considère un panier comme abandonné
+              10 minutes après que le client a saisi son email sans payer.
+            </p>
+          ) : (
+            <ul className="mt-3 divide-y divide-line rounded-lg border border-line bg-white">
+              {carts.map((c) => (
+                <li key={c.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{c.first_name || c.email}</p>
+                    <p className="text-xs text-muted">
+                      {new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short", timeZone: "Europe/Paris" }).format(
+                        new Date(c.abandoned_at),
+                      )}{" "}
+                      · {STATUS_LABEL[c.status] ?? c.status}
+                    </p>
+                  </div>
+                  <p className="shrink-0 font-semibold num">
+                    {new Intl.NumberFormat("fr-FR", { style: "currency", currency: c.currency }).format(c.total_cents / 100)}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
+
       {shop && (
         <section className="mt-8">
           <h2 className="font-semibold text-lg">Tes relances</h2>
@@ -133,6 +212,14 @@ async function Dashboard() {
     </>
   );
 }
+
+const STATUS_LABEL: Record<string, string> = {
+  pending: "à relancer",
+  relance1_sent: "relance 1 envoyée",
+  relance2_sent: "relance 2 envoyée",
+  recovered: "récupéré",
+  stopped: "payé sans relance",
+};
 
 function StepItem({ done, title, children }: { done: boolean; title: string; children: React.ReactNode }) {
   return (
