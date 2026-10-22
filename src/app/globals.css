@@ -1,26 +1,53 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-bottle: #1f3d2b;
+  --color-bottle-soft: #2c5440;
+  --color-brick: #d9541e;
+  --color-brick-dark: #b8441a;
+  --color-paper: #f6f2ea;
+  --color-paper-deep: #ece5d8;
+  --color-ink: #1b1d1a;
+  --color-muted: #5f625b;
+  --color-line: #d8d0c0;
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-sans: var(--font-plex), system-ui, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum" 1;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bord dentelé du ticket de caisse */
+.ticket {
+  position: relative;
+  background: #fffdf8;
+  --tooth: 8px;
+  -webkit-mask:
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--tooth) 51% repeat-x,
+    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / var(--tooth) 51% repeat-x;
+  mask:
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / var(--tooth) 51% repeat-x,
+    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / var(--tooth) 51% repeat-x;
+  padding-block: 18px;
+}
+
+.dashed {
+  border-top: 1.5px dashed var(--color-line);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-brick);
+  outline-offset: 2px;
 }
