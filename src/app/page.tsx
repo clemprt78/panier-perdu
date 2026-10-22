@@ -23,6 +23,41 @@ export default function Home() {
       <main className="flex-1">
         <Scrolly />
 
+        {/* En clair, sans animation : à quoi ça sert, en 3 étapes */}
+        <section className="bg-paper px-4 py-16 sm:py-24" aria-labelledby="comment">
+          <div className="mx-auto max-w-6xl">
+            <p className="text-[0.8rem] font-semibold uppercase tracking-[0.18em] text-brick-dark">En clair</p>
+            <h2 id="comment" className="mt-3 font-poster text-[clamp(2.2rem,8vw,4.5rem)] uppercase leading-[0.95] text-ink">
+              Comment ça marche
+            </h2>
+            <ol className="mt-10 grid gap-4 sm:grid-cols-3 sm:gap-6">
+              {[
+                {
+                  n: "1",
+                  t: "On branche ta boutique Shopify",
+                  d: "10 minutes, ensemble, une seule fois. Tes relances sont déjà écrites à ton nom.",
+                },
+                {
+                  n: "2",
+                  t: "Les relances partent toutes seules",
+                  d: "Un client part sans payer ? Il reçoit un email 1 heure après, puis un second avec −10 % le lendemain.",
+                },
+                {
+                  n: "3",
+                  t: "Tu vois les ventes récupérées",
+                  d: "Ton espace affiche, en euros, ce que les relances t’ont rapporté ce mois-ci.",
+                },
+              ].map((x) => (
+                <li key={x.n} className="rounded-2xl border border-line bg-white p-6">
+                  <span className="font-poster text-5xl leading-none text-brick">{x.n}</span>
+                  <h3 className="mt-4 text-lg font-semibold leading-snug">{x.t}</h3>
+                  <p className="mt-2 leading-relaxed text-muted">{x.d}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
         {/* Fin du récit : l'appel à l'action */}
         <section className="bg-ink px-4 py-20 text-paper">
           <div className="mx-auto max-w-6xl">

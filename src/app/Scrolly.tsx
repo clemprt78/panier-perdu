@@ -25,7 +25,7 @@ const STEPS: Step[] = [
     text: "#2f2c26",
     kicker: "Pour les boutiques Shopify de 10 à 150 commandes par mois",
     title: "Récupère les paniers abandonnés de ta boutique.",
-    body: "Deux relances bien écrites, envoyées au bon moment. Et le chiffre d’affaires récupéré, en euros. 39 € par mois.",
+    body: "",
   },
   {
     bg: "#c9c1f5",
@@ -148,7 +148,7 @@ export default function Scrolly() {
 
         <div className="relative mx-auto flex h-full max-w-6xl flex-col px-4 pt-20 pb-28 sm:pb-16 lg:flex-row lg:items-center lg:gap-12">
           {/* Titres : un seul visible à la fois, révélé par un rideau */}
-          <div className="relative min-h-[34svh] flex-1 lg:h-[70svh] lg:min-h-0">
+          <div className="relative min-h-[42svh] flex-1 lg:h-[70svh] lg:min-h-0">
             {STEPS.map((st, i) => {
               const Tag = i === 0 ? "h1" : "h2";
               const on = i === active;
@@ -164,18 +164,26 @@ export default function Scrolly() {
                     clipPath: on ? "inset(0 0 0 0)" : i < active ? "inset(0 0 100% 0)" : "inset(100% 0 0 0)",
                   }}
                 >
-                  <p className="flex items-center gap-3 text-[0.78rem] font-semibold uppercase tracking-[0.2em]" style={{ color: st.text }}>
+                  <p className="flex items-center gap-3 text-[0.78rem] font-semibold uppercase tracking-[0.2em] [@media(max-height:740px)_and_(max-width:1023px)]:hidden" style={{ color: st.text }}>
                     <span className="num rounded-full border px-2 py-0.5 text-[0.7rem]" style={{ borderColor: st.text }}>
                       0{i + 1}
                     </span>
                     {st.kicker}
                   </p>
                   <Tag
-                    className="mt-4 font-poster uppercase leading-[0.9] text-[clamp(2.6rem,12.5vw,7.8rem)] lg:text-[clamp(4rem,7.3vw,7.8rem)]"
+                    className={`mt-4 font-poster uppercase leading-[0.9] lg:text-[clamp(4rem,7.3vw,7.8rem)] ${
+                      i === 0 ? "text-[clamp(2.3rem,10.5vw,7.8rem)]" : "text-[clamp(2.6rem,12.5vw,7.8rem)]"
+                    }`}
                     style={{ color: "#fffdf8", textShadow: extrude(st.ink) }}
                   >
                     {st.title}
                   </Tag>
+                  {i === 0 && (
+                    <p className="mt-4 max-w-xl text-[1.02rem] font-medium leading-snug sm:text-lg" style={{ color: st.text }}>
+                      Quand un client quitte ta boutique Shopify sans payer, Panier Perdu lui envoie{" "}
+                      <b>automatiquement deux emails</b> pour le faire revenir. Tu récupères des ventes, sans rien faire.
+                    </p>
+                  )}
                 </div>
               );
             })}
@@ -186,16 +194,16 @@ export default function Scrolly() {
             <div ref={tilt} className="pp-tilt">
               <div key={active} className="pp-flip">
                 <div className="pp-float">
-                  <Ticket step={active} />
+                  {active === 0 ? <FlowCard /> : <Ticket step={active} />}
                 </div>
               </div>
             </div>
-            <p
-              className="mt-5 text-[0.98rem] leading-relaxed transition-colors duration-700 lg:text-base [@media(max-height:740px)_and_(max-width:1023px)]:hidden"
+            {s.body && <p
+              className="mt-5 text-[0.98rem] leading-relaxed transition-colors duration-700 lg:text-base [@media(max-height:900px)_and_(max-width:1023px)]:hidden"
               style={{ color: s.text }}
             >
               {s.body}
-            </p>
+            </p>}
           </div>
         </div>
 
@@ -236,7 +244,7 @@ function Shapes({ ink }: { ink: string }) {
       </div>
 
       {/* Cube 3D qui tourne */}
-      <div className="pp-par absolute left-[6%] top-[62%] hidden sm:block [--depth:90px]">
+      <div className="pp-par absolute left-[26%] top-[12%] hidden sm:block [--depth:90px]">
         <div className="pp-cube-wrap">
           <div className="pp-cube">
             {["front", "back", "right", "left", "top", "bottom"].map((f) => (
@@ -274,6 +282,63 @@ function Shapes({ ink }: { ink: string }) {
         </div>
       </div>
     </div>
+  );
+}
+
+// Le produit en une image : panier abandonné → relance automatique → vente récupérée.
+function FlowCard() {
+  const steps = [
+    { icon: <CartIcon />, title: "Julie abandonne son panier", meta: "64 € · 14:02", tone: "bg-[#f3e2d8] text-brick-dark" },
+    { icon: <MailIcon />, title: "Panier Perdu la relance", meta: "Email automatique · 15:02", tone: "bg-[#dfe7f3] text-[#0f3550]" },
+    { icon: <CheckIcon />, title: "Julie commande", meta: "Vente récupérée", tone: "bg-[#d6ecdd] text-bottle" },
+  ];
+  return (
+    <div className="rounded-2xl bg-[#fffdf8] p-4 shadow-[0_40px_70px_-25px_rgba(0,0,0,0.45)]">
+      <p className="px-1 text-[0.7rem] uppercase tracking-widest text-muted">Ce que fait Panier Perdu</p>
+      <ol className="mt-3">
+        {steps.map((st, i) => (
+          <li key={st.title} className="pp-rise relative flex gap-3 pb-3 last:pb-0" style={{ animationDelay: `${0.15 + i * 0.35}s` }}>
+            {i < steps.length - 1 && (
+              <span aria-hidden className="absolute left-[19px] top-10 bottom-0 border-l-2 border-dashed border-line" />
+            )}
+            <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${st.tone}`}>{st.icon}</span>
+            <span className="flex flex-1 items-center justify-between gap-2">
+              <span>
+                <span className="block text-[0.95rem] font-semibold leading-tight text-ink">{st.title}</span>
+                <span className="block text-[0.8rem] text-muted">{st.meta}</span>
+              </span>
+              {i === steps.length - 1 && <span className="font-poster text-[1.7rem] leading-none text-bottle num">+64 €</span>}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+const svg = { width: 20, height: 20, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
+function CartIcon() {
+  return (
+    <svg {...svg}>
+      <circle cx="9" cy="20" r="1.4" />
+      <circle cx="18" cy="20" r="1.4" />
+      <path d="M2 3h3l2.6 12.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.5L21 8H6" />
+    </svg>
+  );
+}
+function MailIcon() {
+  return (
+    <svg {...svg}>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3 7 9 6 9-6" />
+    </svg>
+  );
+}
+function CheckIcon() {
+  return (
+    <svg {...svg}>
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
   );
 }
 
