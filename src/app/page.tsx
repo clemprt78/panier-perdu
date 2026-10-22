@@ -169,6 +169,10 @@ export default function Home() {
                 complet sur ta carte sous {GUARANTEE.refundDays} jours. Sans engagement, résiliable à tout moment.
               </p>
             </div>
+            <div className="mt-8 flex flex-col items-center gap-2 sm:flex-row sm:gap-4">
+              <CtaButton className="w-full sm:w-fit" />
+              <span className="text-sm text-muted">Tu vois ton chiffre avant de payer quoi que ce soit.</span>
+            </div>
           </div>
         </section>
 

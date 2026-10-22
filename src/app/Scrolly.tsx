@@ -131,15 +131,6 @@ export default function Scrolly() {
           style={{ background: `radial-gradient(circle at 60% 45%, ${s.glow} 0%, transparent 45%)` }}
         />
 
-        {/* Mot géant en contour qui glisse avec le défilement */}
-        <div
-          aria-hidden
-          className="pp-marquee pointer-events-none absolute left-0 top-[58%] whitespace-nowrap font-poster uppercase leading-none text-transparent"
-          style={{ WebkitTextStroke: `1.5px ${s.ink}` }}
-        >
-          Panier Perdu · Panier Récupéré · Panier Perdu · Panier Récupéré ·
-        </div>
-
         {/* Objets 3D flottants (CSS pur, aucune image) */}
         <Shapes ink={s.ink} />
 
@@ -148,7 +139,7 @@ export default function Scrolly() {
 
         <div className="relative mx-auto flex h-full max-w-6xl flex-col px-4 pt-20 pb-24 sm:pb-16 lg:flex-row lg:items-center lg:gap-12">
           {/* Titres : un seul visible à la fois, révélé par un rideau */}
-          <div className="relative min-h-[42svh] flex-1 lg:h-[70svh] lg:min-h-0">
+          <div className="relative min-h-[42svh] flex-1 lg:h-[78svh] lg:min-h-0">
             {STEPS.map((st, i) => {
               const Tag = i === 0 ? "h1" : "h2";
               const on = i === active;
@@ -171,7 +162,7 @@ export default function Scrolly() {
                     {st.kicker}
                   </p>
                   <Tag
-                    className={`mt-4 font-poster uppercase leading-[0.9] lg:text-[clamp(4rem,7.3vw,7.8rem)] ${
+                    className={`mt-4 font-poster uppercase leading-[0.9] lg:text-[clamp(3rem,min(6.4vw,10.5vh),7.2rem)] ${
                       i === 0 ? "text-[clamp(2.3rem,10.5vw,7.8rem)]" : "text-[clamp(2.6rem,12.5vw,7.8rem)]"
                     }`}
                     style={{ color: "#fffdf8", textShadow: extrude(st.ink) }}
@@ -184,13 +175,17 @@ export default function Scrolly() {
                         Un client part sans payer ? Panier Perdu lui envoie <b>deux emails automatiques</b>. Il revient,
                         tu encaisses.
                       </p>
-                      <ul className="mt-4 flex flex-wrap gap-1.5 text-[0.74rem] font-semibold sm:gap-2 sm:text-sm" style={{ color: st.text }}>
+                      <ul className="mt-4 flex flex-wrap gap-1.5 text-[0.74rem] font-semibold sm:gap-2 sm:text-sm [@media(max-height:700px)_and_(max-width:639px)]:hidden" style={{ color: st.text }}>
                         {["Sans engagement", "Remboursé 30 jours", "Prêt en 10 min"].map((t) => (
                           <li key={t} className="rounded-full bg-white/60 px-2.5 py-1 backdrop-blur-sm">
                             ✓ {t}
                           </li>
                         ))}
                       </ul>
+                      <div className="mt-6 hidden items-center gap-4 sm:flex">
+                        <CtaButton className="w-fit" />
+                        <span className="text-sm text-muted">3 questions · 1 minute · sans inscription</span>
+                      </div>
                     </>
                   )}
                 </div>
@@ -252,21 +247,6 @@ function Shapes({ ink }: { ink: string }) {
         />
       </div>
 
-      {/* Cube 3D qui tourne */}
-      <div className="pp-par absolute left-[28%] top-[6%] hidden sm:block [--depth:90px]">
-        <div className="pp-cube-wrap">
-          <div className="pp-cube">
-            {["front", "back", "right", "left", "top", "bottom"].map((f) => (
-              <span
-                key={f}
-                className={`pp-face pp-${f}`}
-                style={{ background: `linear-gradient(135deg, rgba(255,255,255,.85), ${ink}44)`, borderColor: `${ink}55` }}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Anneau chromé */}
       <div className="pp-par absolute bottom-[16%] right-[18%] hidden sm:block [--depth:140px]">
         <div
@@ -281,15 +261,6 @@ function Shapes({ ink }: { ink: string }) {
         />
       </div>
 
-      {/* Petite pastille « -10 % » */}
-      <div className="pp-par absolute left-[46%] top-[10%] hidden lg:block [--depth:-30px]">
-        <div
-          className="pp-bob grid h-16 w-16 place-items-center rounded-full font-poster text-lg text-white"
-          style={{ background: ink, boxShadow: `0 16px 30px -10px ${ink}` }}
-        >
-          −10%
-        </div>
-      </div>
     </div>
   );
 }
