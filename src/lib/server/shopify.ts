@@ -92,6 +92,9 @@ export async function syncAbandonedCheckouts(shopId: string) {
   const { data: shop } = await db.from("shops").select("id, shopify_domain").eq("id", shopId).single();
   const { data: secret } = await db.from("shop_secrets").select("shopify_access_token").eq("shop_id", shopId).single();
   if (!shop?.shopify_domain || !secret) throw new Error("Boutique non branchée");
+  await fillShopName(shop.id, shop.shopify_domain, secret.shopify_access_token).catch((e) =>
+    console.error("shop name", e),
+  );
 
   const since = new Date(Date.now() - 14 * 24 * 3600 * 1000).toISOString();
   const q = `created_at:>='${since}'`;
