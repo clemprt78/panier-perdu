@@ -20,7 +20,7 @@ const BENEFITS = [
 export default function Home() {
   return (
     <>
-      <main className="flex-1 px-4 pt-6 pb-28 sm:pb-12">
+      <main className="flex-1 px-4 pt-6 pb-12">
         <div className="mx-auto max-w-2xl">
           <p className="font-display text-lg font-semibold text-bottle">{SITE.name}</p>
 
@@ -79,6 +79,8 @@ export default function Home() {
       </div>
 
       <Footer />
+      {/* Espace réservé sous le pied de page : le bouton collé en bas ne cache plus rien */}
+      <div className="h-32 sm:hidden" aria-hidden="true" />
     </>
   );
 }
