@@ -23,7 +23,7 @@ export default function AppPage({ searchParams }: PageProps<"/app">) {
     <main className="flex-1 px-4 pt-5 pb-12">
       <div className="mx-auto max-w-2xl">
         <header className="flex items-center justify-between">
-          <Link href="/app" className="font-display text-lg font-semibold text-bottle py-2">
+          <Link href="/app" className="font-display text-xl uppercase tracking-wide text-ink py-2">
             Panier Perdu
           </Link>
           <form method="post" action="/auth/deconnexion">
@@ -110,7 +110,7 @@ async function Dashboard({ searchParams }: { searchParams: PageProps<"/app">["se
       )}
       <section className="mt-6">
         <p className="text-sm text-muted">{user.email}</p>
-        <h1 className="mt-1 font-display text-[1.9rem] font-extrabold leading-tight">
+        <h1 className="mt-1 font-display uppercase text-[2.5rem] leading-tight">
           {shop?.name ? `Bonjour, ${shop.name}` : "Bonjour"}
         </h1>
         {sub ? (
@@ -130,7 +130,7 @@ async function Dashboard({ searchParams }: { searchParams: PageProps<"/app">["se
       {/* Le compteur, même vide, montre ce qui arrive */}
       <section className="ticket mt-6 px-5" aria-label="Chiffre d'affaires récupéré">
         <p className="text-xs uppercase tracking-widest text-muted">Récupéré ce mois-ci</p>
-        <p className="mt-1 font-display text-5xl font-extrabold text-bottle num">{euros(recovered)}</p>
+        <p className="mt-1 font-display text-5xl text-bottle num">{euros(recovered)}</p>
         <p className="mt-2 text-sm text-muted">
           {shop?.shopify_domain
             ? "Commandes passées dans les 7 jours suivant une relance."

@@ -76,7 +76,7 @@ export default function Funnel() {
     <main className="flex-1 px-4 pt-5 pb-12">
       <div className="mx-auto max-w-2xl">
         <header className="flex items-center justify-between">
-          <Link href="/" className="font-display text-lg font-semibold text-bottle py-2">
+          <Link href="/" className="font-display text-xl uppercase tracking-wide text-ink py-2">
             Panier Perdu
           </Link>
           {step > 0 && (
@@ -146,7 +146,7 @@ function Question({
         <span className="text-sm text-muted num">{index + 1}/3</span>
       </div>
 
-      <h1 className="mt-8 font-display text-[1.75rem] leading-tight font-extrabold">{q.title}</h1>
+      <h1 className="mt-8 font-display uppercase text-[2.3rem] leading-tight">{q.title}</h1>
       <p className="mt-2 text-muted">{q.hint}</p>
 
       <div className="mt-6 flex flex-col gap-3">
@@ -183,7 +183,7 @@ function Result({ a, onNext }: { a: Answers; onNext: () => void }) {
   return (
     <section className="mt-6">
       <p className="text-sm font-medium uppercase tracking-wider text-muted">Ton résultat</p>
-      <h1 className="mt-2 font-display text-[1.75rem] leading-tight font-extrabold">
+      <h1 className="mt-2 font-display uppercase text-[2.3rem] leading-tight">
         Chaque mois, environ <span className="text-brick num">{euros(r.lostEuros)}</span> restent dans des paniers
         abandonnés.
       </h1>
@@ -198,7 +198,7 @@ function Result({ a, onNext }: { a: Answers; onNext: () => void }) {
         <div className="dashed my-3" />
         <div className="flex items-baseline justify-between gap-3">
           <span className="font-medium leading-snug">En plus, avec 2 bonnes relances</span>
-          <span className="font-display text-3xl font-extrabold text-bottle num whitespace-nowrap">
+          <span className="font-display text-3xl text-bottle num whitespace-nowrap">
             +{euros(r.gain)}
           </span>
         </div>
@@ -236,7 +236,7 @@ function Result({ a, onNext }: { a: Answers; onNext: () => void }) {
       <button
         type="button"
         onClick={onNext}
-        className="mt-8 flex h-14 w-full items-center justify-center rounded-lg bg-brick text-lg font-semibold text-white active:bg-brick-dark"
+        className="mt-8 flex h-14 w-full items-center justify-center rounded-full bg-ink text-lg font-semibold text-white active:scale-[0.98] hover:bg-black"
       >
         Voir mes relances, écrites pour moi
       </button>
@@ -269,7 +269,7 @@ function Preview({ a, setShop, onNext }: { a: Answers; setShop: (s: string) => v
   return (
     <section className="mt-6">
       <p className="text-sm font-medium uppercase tracking-wider text-muted">Ton avant-goût, gratuit</p>
-      <h1 className="mt-2 font-display text-[1.75rem] leading-tight font-extrabold">
+      <h1 className="mt-2 font-display uppercase text-[2.3rem] leading-tight">
         Ta première relance est prête. Copie-la, elle est à toi.
       </h1>
 
@@ -319,7 +319,7 @@ function Preview({ a, setShop, onNext }: { a: Answers; setShop: (s: string) => v
       <button
         type="button"
         onClick={onNext}
-        className="mt-8 flex h-14 w-full items-center justify-center rounded-lg bg-brick text-lg font-semibold text-white active:bg-brick-dark"
+        className="mt-8 flex h-14 w-full items-center justify-center rounded-full bg-ink text-lg font-semibold text-white active:scale-[0.98] hover:bg-black"
       >
         Débloquer mon plan complet
       </button>
@@ -339,7 +339,20 @@ export function EmailCard({ email, label }: { email: { when: string; subject: st
           <span className="text-muted">Objet : </span>
           <span className="font-medium">{email.subject}</span>
         </p>
-        <pre className="mt-3 whitespace-pre-wrap font-sans text-[0.95rem] leading-relaxed">{email.body}</pre>
+        <pre className="mt-3 whitespace-pre-wrap font-sans text-[0.95rem] leading-relaxed">
+          {email.body.split(/(\{\{[^}]+\}\})/g).map((part, i) =>
+            part.startsWith("{{") ? (
+              <span key={i} className="rounded bg-[#dfe7f3] px-1 text-[0.85rem] font-medium text-[#0f3550]">
+                {part.slice(2, -2)}
+              </span>
+            ) : (
+              part
+            ),
+          )}
+        </pre>
+        <p className="mt-3 text-xs text-muted">
+          Les mots en bleu sont remplis automatiquement pour chaque client.
+        </p>
       </div>
     </article>
   );

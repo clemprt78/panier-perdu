@@ -33,7 +33,7 @@ export default function Paywall({ a }: { a: Answers }) {
       <p className="inline-block rounded bg-bottle px-2 py-1 text-xs font-semibold uppercase tracking-wider text-white">
         Satisfait ou remboursé {GUARANTEE.days} jours
       </p>
-      <h1 className="mt-3 font-display text-[1.9rem] leading-tight font-extrabold">Voilà ton plan, prêt.</h1>
+      <h1 className="mt-3 font-display uppercase text-[2.5rem] leading-tight">Voilà ton plan, prêt.</h1>
       <ul className="mt-4 space-y-2">
         <Check>Relance 1, écrite pour {shopName(a)}</Check>
         <Check>Relance 2 avec code de réduction de 10 %</Check>
@@ -45,12 +45,12 @@ export default function Paywall({ a }: { a: Answers }) {
       <div className="mt-6 grid grid-cols-2 gap-3 num">
         <div className="rounded-lg bg-bottle p-4 text-white">
           <p className="text-sm text-white/80">Récupéré en plus, estimation</p>
-          <p className="mt-1 font-display text-3xl font-extrabold">+{euros(r.gain)}</p>
+          <p className="mt-1 font-display text-3xl">+{euros(r.gain)}</p>
           <p className="text-sm text-white/80">par mois</p>
         </div>
         <div className="rounded-lg border-2 border-line bg-white p-4">
           <p className="text-sm text-muted">Panier Perdu</p>
-          <p className="mt-1 font-display text-3xl font-extrabold">{euros(monthly)}</p>
+          <p className="mt-1 font-display text-3xl">{euros(monthly)}</p>
           <p className="text-sm text-muted">par mois</p>
         </div>
       </div>
@@ -120,7 +120,7 @@ export default function Paywall({ a }: { a: Answers }) {
 
       {/* 7. Les quatre objections */}
       <section className="mt-10">
-        <h2 className="font-display text-2xl font-extrabold">Questions fréquentes</h2>
+        <h2 className="font-display text-2xl">Questions fréquentes</h2>
         <Faq q="Est-ce que ça marche pour ma boutique ?">
           Panier Perdu est fait pour les boutiques Shopify de 10 à 150 commandes par mois. Il relance les clients qui ont
           laissé leur email au moment du paiement. Si ta boutique n&apos;est pas sur Shopify, écris-nous avant de payer.
@@ -200,7 +200,7 @@ function Checkout({ plan, a }: { plan: PlanId; a: Answers }) {
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="mt-3 h-12 w-full rounded-lg bg-brick font-semibold text-white"
+          className="mt-3 h-12 w-full rounded-full bg-ink font-semibold text-white hover:bg-black"
         >
           Réessayer
         </button>

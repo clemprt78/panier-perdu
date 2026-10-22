@@ -14,7 +14,7 @@ export default function MerciPage({ searchParams }: PageProps<"/merci">) {
     <>
       <main className="flex-1 px-4 pt-5 pb-12">
         <div className="mx-auto max-w-2xl">
-          <Link href="/" className="font-display text-lg font-semibold text-bottle py-2 inline-block">
+          <Link href="/" className="font-display text-xl uppercase tracking-wide text-ink py-2 inline-block">
             Panier Perdu
           </Link>
           <Suspense fallback={<p className="mt-10 text-muted">Vérification de ton paiement…</p>}>
@@ -42,14 +42,14 @@ async function Delivery({ searchParams }: { searchParams: PageProps<"/merci">["s
   if (!session || !isPaid(session)) {
     return (
       <section className="mt-8">
-        <h1 className="font-display text-[1.75rem] leading-tight font-extrabold">Le paiement n&apos;a pas abouti.</h1>
+        <h1 className="font-display uppercase text-[2.3rem] leading-tight">Le paiement n&apos;a pas abouti.</h1>
         <p className="mt-3 leading-relaxed text-muted">
           Rien n&apos;a été débité. Ça arrive quand la carte est refusée ou que la page a été fermée trop tôt. Tes
           réponses sont gardées : tu peux réessayer en un instant.
         </p>
         <Link
           href="/diagnostic"
-          className="mt-6 flex h-14 w-full items-center justify-center rounded-lg bg-brick text-lg font-semibold text-white"
+          className="mt-6 flex h-14 w-full items-center justify-center rounded-full bg-ink text-lg font-semibold text-white hover:bg-black"
         >
           Réessayer le paiement
         </Link>
@@ -65,7 +65,7 @@ async function Delivery({ searchParams }: { searchParams: PageProps<"/merci">["s
       <p className="inline-block rounded bg-bottle px-2 py-1 text-xs font-semibold uppercase tracking-wider text-white">
         Paiement confirmé
       </p>
-      <h1 className="mt-3 font-display text-[1.9rem] leading-tight font-extrabold">C&apos;est fait. Ton plan est à toi.</h1>
+      <h1 className="mt-3 font-display uppercase text-[2.5rem] leading-tight">C&apos;est fait. Ton plan est à toi.</h1>
       <p className="mt-3 leading-relaxed">
         {data ? `Formule ${PLANS[data.plan].name}. ` : ""}
         Une copie complète part {email ? <>à <b>{email}</b></> : "par email"}, avec le lien vers ton espace client.

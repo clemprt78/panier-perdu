@@ -23,7 +23,7 @@ const STEPS: Step[] = [
     glow: "#ffffff",
     ink: "#1f3d2b",
     text: "#2f2c26",
-    kicker: "Pour les boutiques Shopify de 10 à 150 commandes par mois",
+    kicker: "Pour les boutiques Shopify",
     title: "Récupère les paniers abandonnés de ta boutique.",
     body: "",
   },
@@ -67,7 +67,7 @@ const STEPS: Step[] = [
 
 // Relief façon « titre en 3D » : couches d'ombre décalées dans la couleur forte.
 const extrude = (c: string) =>
-  [1, 2, 3, 4, 5, 6, 7].map((i) => `${i}px ${i}px 0 ${c}`).join(", ") + `, 10px 16px 28px rgba(0,0,0,0.25)`;
+  [1, 2, 3, 4, 5].map((i) => `${i}px ${i}px 0 ${c}b3`).join(", ") + `, 6px 14px 30px rgba(0,0,0,0.22)`;
 
 export default function Scrolly() {
   const [active, setActive] = useState(0);
@@ -146,7 +146,7 @@ export default function Scrolly() {
         {/* Grain discret façon affiche */}
         <div aria-hidden className="pp-grain pointer-events-none absolute inset-0" />
 
-        <div className="relative mx-auto flex h-full max-w-6xl flex-col px-4 pt-20 pb-28 sm:pb-16 lg:flex-row lg:items-center lg:gap-12">
+        <div className="relative mx-auto flex h-full max-w-6xl flex-col px-4 pt-20 pb-24 sm:pb-16 lg:flex-row lg:items-center lg:gap-12">
           {/* Titres : un seul visible à la fois, révélé par un rideau */}
           <div className="relative min-h-[42svh] flex-1 lg:h-[70svh] lg:min-h-0">
             {STEPS.map((st, i) => {
@@ -179,10 +179,19 @@ export default function Scrolly() {
                     {st.title}
                   </Tag>
                   {i === 0 && (
-                    <p className="mt-4 max-w-xl text-[1.02rem] font-medium leading-snug sm:text-lg" style={{ color: st.text }}>
-                      Quand un client quitte ta boutique Shopify sans payer, Panier Perdu lui envoie{" "}
-                      <b>automatiquement deux emails</b> pour le faire revenir. Tu récupères des ventes, sans rien faire.
-                    </p>
+                    <>
+                      <p className="mt-4 max-w-lg text-[1.05rem] font-medium leading-snug sm:text-xl" style={{ color: st.text }}>
+                        Un client part sans payer ? Panier Perdu lui envoie <b>deux emails automatiques</b>. Il revient,
+                        tu encaisses.
+                      </p>
+                      <ul className="mt-4 flex flex-wrap gap-2 text-[0.78rem] font-semibold sm:text-sm" style={{ color: st.text }}>
+                        {["Sans engagement", "Satisfait ou remboursé 30 jours", "Prêt en 10 min"].map((t) => (
+                          <li key={t} className="rounded-full bg-white/60 px-3 py-1 backdrop-blur-sm">
+                            ✓ {t}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
                   )}
                 </div>
               );
@@ -233,7 +242,7 @@ function Shapes({ ink }: { ink: string }) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0">
       {/* Sphère en verre */}
-      <div className="pp-par absolute right-[8%] top-[14%] [--depth:-60px]">
+      <div className="pp-par absolute right-[-6%] top-[7%] sm:right-[8%] sm:top-[14%] [--depth:-60px]">
         <div
           className="pp-bob h-20 w-20 rounded-full opacity-80 sm:h-40 sm:w-40 sm:opacity-100"
           style={{
@@ -244,7 +253,7 @@ function Shapes({ ink }: { ink: string }) {
       </div>
 
       {/* Cube 3D qui tourne */}
-      <div className="pp-par absolute left-[26%] top-[12%] hidden sm:block [--depth:90px]">
+      <div className="pp-par absolute left-[28%] top-[6%] hidden sm:block [--depth:90px]">
         <div className="pp-cube-wrap">
           <div className="pp-cube">
             {["front", "back", "right", "left", "top", "bottom"].map((f) => (

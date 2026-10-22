@@ -10,7 +10,7 @@
   --color-ink: #1b1d1a;
   --color-muted: #5f625b;
   --color-line: #d8d0c0;
-  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-display: var(--font-anton), Impact, "Arial Narrow", sans-serif;
   --font-poster: var(--font-anton), Impact, "Arial Narrow", sans-serif;
   --font-sans: var(--font-plex), system-ui, sans-serif;
 }

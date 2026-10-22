@@ -39,7 +39,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-4 flex h-14 w-full items-center justify-center rounded-lg bg-brick text-lg font-semibold text-white disabled:opacity-60"
+        className="mt-4 flex h-14 w-full items-center justify-center rounded-full bg-ink text-lg font-semibold text-white hover:bg-black disabled:opacity-60"
       >
         {pending ? "Envoi…" : "Recevoir mon lien"}
       </button>

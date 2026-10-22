@@ -11,10 +11,10 @@ export default function ConnexionPage({ searchParams }: PageProps<"/connexion">)
     <>
       <main className="flex-1 px-4 pt-5 pb-12">
         <div className="mx-auto max-w-md">
-          <Link href="/" className="font-display text-lg font-semibold text-bottle py-2 inline-block">
+          <Link href="/" className="font-display text-xl uppercase tracking-wide text-ink py-2 inline-block">
             Panier Perdu
           </Link>
-          <h1 className="mt-8 font-display text-[1.9rem] font-extrabold leading-tight">Accéder à mon espace</h1>
+          <h1 className="mt-8 font-display uppercase text-[2.5rem] leading-tight">Accéder à mon espace</h1>
           <p className="mt-2 text-muted">Pas de mot de passe : on t&apos;envoie un lien de connexion par email.</p>
           <Suspense>
             <LinkError searchParams={searchParams} />

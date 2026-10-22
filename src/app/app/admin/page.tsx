@@ -15,7 +15,7 @@ export default function AdminPage() {
     <main className="flex-1 px-4 pt-5 pb-12">
       <div className="mx-auto max-w-2xl">
         <header className="flex items-center justify-between">
-          <Link href="/app" className="font-display text-lg font-semibold text-bottle py-2">
+          <Link href="/app" className="font-display text-xl uppercase tracking-wide text-ink py-2">
             Panier Perdu
           </Link>
           <a href="/app" className="py-2 pl-4 text-sm text-muted underline underline-offset-4">
@@ -42,7 +42,7 @@ async function Admin() {
 
   return (
     <>
-      <h1 className="mt-6 font-display text-[1.9rem] font-extrabold leading-tight">Administration</h1>
+      <h1 className="mt-6 font-display uppercase text-[2.5rem] leading-tight">Administration</h1>
       <p className="mt-1 text-sm text-muted">Visible uniquement par toi.</p>
 
       <section className="mt-8 rounded-lg border border-line bg-white p-4">

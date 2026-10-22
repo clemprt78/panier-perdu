@@ -5,14 +5,6 @@ import { SITE } from "@/lib/site";
 import "./globals.css";
 
 // Polices hébergées avec le site : pas d'appel à Google, affichage plus rapide.
-const fraunces = localFont({
-  variable: "--font-fraunces",
-  display: "swap",
-  src: [
-    { path: "../fonts/fraunces-latin-600-normal.woff2", weight: "600" },
-    { path: "../fonts/fraunces-latin-800-normal.woff2", weight: "800" },
-  ],
-});
 
 const anton = localFont({
   variable: "--font-anton",
@@ -55,7 +47,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr" className={`${fraunces.variable} ${plex.variable} ${anton.variable} antialiased`}>
+    <html lang="fr" className={`${plex.variable} ${anton.variable} antialiased`}>
       <body className="min-h-dvh flex flex-col">
         {children}
         <Analytics />
