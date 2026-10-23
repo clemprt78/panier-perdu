@@ -81,6 +81,14 @@ function fromName(name: string) {
   return clean || "Ta boutique";
 }
 
+// Adresses gratuites : un Reply-To Gmail sur un email envoyé depuis notre domaine est vu comme suspect
+// par les filtres anti-spam. Dans ce cas, les réponses passent par notre adresse de contact.
+const FREEMAIL = /@(gmail|googlemail|hotmail|outlook|live|msn|yahoo|ymail|icloud|me|mac|aol|orange|wanadoo|free|sfr|neuf|laposte|bbox|gmx|proton|protonmail)\./i;
+function replyAddress(ownerEmail: string | null) {
+  if (ownerEmail && !FREEMAIL.test(ownerEmail)) return ownerEmail;
+  return SITE.contact && SITE.contact.includes("@") ? SITE.contact : undefined;
+}
+
 async function send(shop: Shop, ownerEmail: string | null, c: Checkout, subject: string, text: string) {
   const key = process.env.RESEND_API_KEY;
   if (!key) throw new Error("RESEND_API_KEY manquante");
@@ -89,7 +97,7 @@ async function send(shop: Shop, ownerEmail: string | null, c: Checkout, subject:
   const { error } = await new Resend(key).emails.send({
     from: `${fromName(shop.name)} <relance@${domain}>`,
     to: c.email,
-    replyTo: ownerEmail ?? undefined,
+    replyTo: replyAddress(ownerEmail),
     subject,
     text: `${text}\n\n—\nNe plus recevoir ces messages : ${unsubscribe}`,
     html: toHtml(text, shop.name || "cette boutique", c.recovery_url, unsubscribe),
