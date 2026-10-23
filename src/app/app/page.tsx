@@ -170,7 +170,9 @@ export function DashboardView({
   recoveredMonth,
   currency,
   days,
+  demo = false,
 }: {
+  demo?: boolean;
   email: string;
   shop: Shop | null;
   sub: { plan: string; status: string } | null;
@@ -210,37 +212,59 @@ export function DashboardView({
       <header className="border-b border-line bg-paper">
         <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between gap-3 px-4">
           <div className="flex min-w-0 items-center gap-4">
-            <Logo href="/app" />
+            <Logo href={demo ? "/" : "/app"} />
             {shop?.name && (
               <span className="hidden truncate border-l border-line pl-4 text-sm font-medium text-muted md:inline">{shop.name}</span>
             )}
           </div>
           <div className="flex items-center gap-2">
-            {owner && (
-              <a href="/app/admin" className="hidden rounded-full px-3 py-2 text-sm font-semibold text-ink hover:bg-paper-deep sm:inline-block">
-                Administration
-              </a>
-            )}
-            {connected && (
-              <form method="post" action="/api/shopify/sync">
-                <button
-                  className="whitespace-nowrap rounded-full border-2 border-ink px-3 py-1.5 text-sm font-semibold text-ink hover:bg-ink hover:text-white sm:px-4"
-                  aria-label="Actualiser les paniers"
+            {demo ? (
+              <>
+                <span className="hidden rounded-full bg-[#ff6b1a] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-ink sm:inline-block">
+                  Démo
+                </span>
+                <a
+                  href="/diagnostic"
+                  className="whitespace-nowrap rounded-full bg-ink px-4 py-2 text-sm font-semibold text-white hover:bg-black"
                 >
-                  ↻<span className="hidden sm:inline"> Actualiser</span>
+                  Commencer<span className="hidden sm:inline">, c&apos;est gratuit</span>
+                </a>
+              </>
+            ) : (
+              <>
+              {owner && (
+                <a href="/app/admin" className="hidden rounded-full px-3 py-2 text-sm font-semibold text-ink hover:bg-paper-deep sm:inline-block">
+                  Administration
+                </a>
+              )}
+              {connected && (
+                <form method="post" action="/api/shopify/sync">
+                  <button
+                    className="whitespace-nowrap rounded-full border-2 border-ink px-3 py-1.5 text-sm font-semibold text-ink hover:bg-ink hover:text-white sm:px-4"
+                    aria-label="Actualiser les paniers"
+                  >
+                    ↻<span className="hidden sm:inline"> Actualiser</span>
+                  </button>
+                </form>
+              )}
+              <form method="post" action="/auth/deconnexion">
+                <button className="whitespace-nowrap rounded-full px-2 py-2 text-sm text-muted hover:text-ink sm:px-3" title="Se déconnecter">
+                  Déconnexion
                 </button>
               </form>
+              </>
             )}
-            <form method="post" action="/auth/deconnexion">
-              <button className="whitespace-nowrap rounded-full px-2 py-2 text-sm text-muted hover:text-ink sm:px-3" title="Se déconnecter">
-                Déconnexion
-              </button>
-            </form>
           </div>
         </div>
       </header>
 
       <div className="pp-enter mx-auto w-full max-w-[1600px] flex-1 p-4 lg:min-h-0">
+        {demo && (
+          <p className="mb-4 rounded-2xl border-2 border-dashed border-[#ff6b1a] bg-white px-4 py-3 text-sm">
+            <b>Exemple d&apos;espace client</b>, avec une boutique et des clients fictifs. C&apos;est ce que tu verras une fois
+            ta boutique branchée.
+          </p>
+        )}
         {msg && (
           <p
             role="status"
