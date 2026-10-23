@@ -3,6 +3,7 @@ import Link from "next/link";
 import Logo from "@/components/Logo";
 import { Suspense } from "react";
 import Footer from "@/components/Footer";
+import CopyText from "@/components/CopyText";
 import { EmailCard } from "@/app/diagnostic/Funnel";
 import { SETTINGS, relance1, relance2, LAUNCH_DATE_LABEL, PLANS } from "@/lib/diagnostic";
 import { stripe } from "@/lib/server/stripe";
@@ -73,8 +74,18 @@ async function Delivery({ searchParams }: { searchParams: PageProps<"/merci">["s
 
       {data && (
         <>
-          <EmailCard email={relance1(data.answers)} label="Relance 1" />
-          <EmailCard email={relance2(data.answers)} label="Relance 2, avec code de réduction" />
+          {[
+            { e: relance1(data.answers), label: "Relance 1" },
+            { e: relance2(data.answers), label: "Relance 2, avec code de réduction" },
+          ].map(({ e, label }) => (
+            <div key={label}>
+              <EmailCard email={e} label={label} />
+              <div className="mt-2 flex gap-2">
+                <CopyText text={`Objet : ${e.subject}\n\n${e.body}`} label="Copier l'email" className="flex-1" />
+                <CopyText text={e.subject} label="Copier l'objet" />
+              </div>
+            </div>
+          ))}
           <div className="mt-5 rounded-lg border border-line bg-white p-4">
             <p className="font-semibold">Les 4 réglages</p>
             <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm leading-relaxed">

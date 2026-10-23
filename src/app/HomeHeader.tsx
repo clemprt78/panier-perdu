@@ -26,7 +26,7 @@ export default function HomeHeader() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-20 transition-[background-color,box-shadow] duration-300 ${
-        solid ? "bg-paper/90 shadow-[0_1px_0_var(--color-line)] backdrop-blur-md" : "bg-transparent"
+        solid ? "bg-paper shadow-[0_1px_0_var(--color-line)] lg:bg-paper/90 lg:backdrop-blur-md" : "bg-transparent"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">

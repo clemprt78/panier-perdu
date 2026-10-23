@@ -78,7 +78,7 @@ export default function Funnel() {
 
   const go = (s: Step) => {
     setStep(s);
-    window.scrollTo({ top: 0 });
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   };
 
   const complete = a.orders && a.basket && a.today;
@@ -103,6 +103,7 @@ export default function Funnel() {
           )}
         </header>
 
+        <div key={step} className="pp-enter">
         {step <= 2 && (
           <Question
             index={step}
@@ -129,6 +130,7 @@ export default function Funnel() {
             </button>
           </div>
         )}
+        </div>
       </div>
     </main>
   );

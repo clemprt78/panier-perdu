@@ -7,6 +7,7 @@ import { LAUNCH_DATE_LABEL, PLANS, type PlanId } from "@/lib/diagnostic";
 import { supabaseUser } from "@/lib/server/supabase";
 import { requireOwner } from "@/lib/server/owner";
 import { SITE } from "@/lib/site";
+import CopyText from "@/components/CopyText";
 
 export const metadata: Metadata = { title: "Mon espace", robots: { index: false } };
 
@@ -206,7 +207,7 @@ export function DashboardView({
   return (
     <main className="flex min-h-dvh flex-col bg-paper lg:h-dvh lg:overflow-hidden">
       {/* Barre du haut */}
-      <header className="border-b border-line bg-paper/90 backdrop-blur-md">
+      <header className="border-b border-line bg-paper">
         <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between gap-3 px-4">
           <div className="flex min-w-0 items-center gap-4">
             <Logo href="/app" />
@@ -239,7 +240,7 @@ export function DashboardView({
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-[1600px] flex-1 p-4 lg:min-h-0">
+      <div className="pp-enter mx-auto w-full max-w-[1600px] flex-1 p-4 lg:min-h-0">
         {msg && (
           <p
             role="status"
@@ -396,6 +397,7 @@ export function DashboardView({
                     label="Aperçu"
                     email={{ when: "", subject: shop.relance1_subject, body: shop.relance1_body }}
                   />
+                  <CopyActions subject={shop.relance1_subject} body={shop.relance1_body} />
                 </details>
                 <details className="group mt-2 rounded-2xl bg-paper p-1">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2.5">
@@ -413,6 +415,7 @@ export function DashboardView({
                     label="Aperçu"
                     email={{ when: "", subject: shop.relance2_subject, body: shop.relance2_body }}
                   />
+                  <CopyActions subject={shop.relance2_subject} body={shop.relance2_body} />
                 </details>
                 <p className="mt-3 text-xs text-muted">Une modification à faire ? Écris-nous, on l&apos;applique pour toi.</p>
               </section>
@@ -444,6 +447,15 @@ export function DashboardView({
         </div>
       </div>
     </main>
+  );
+}
+
+function CopyActions({ subject, body }: { subject: string; body: string }) {
+  return (
+    <div className="flex flex-wrap gap-2 px-3 pb-3 pt-3">
+      <CopyText text={`Objet : ${subject}\n\n${body}`} label="Copier l'email" className="flex-1" />
+      <CopyText text={subject} label="Copier l'objet" />
+    </div>
   );
 }
 

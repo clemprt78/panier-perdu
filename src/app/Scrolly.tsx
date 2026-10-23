@@ -121,21 +121,19 @@ export default function Scrolly() {
     <section ref={section} aria-label="Comment ça marche" className="relative" data-home-slides>
       <div
         ref={stage}
-        className="pp-stage sticky top-0 h-[100svh] overflow-hidden transition-[background-color] duration-700 motion-reduce:transition-none"
+        className="pp-stage sticky top-0 h-[100svh] overflow-hidden transition-[background-color] duration-500 ease-out motion-reduce:transition-none"
         style={{ background: s.bg, ["--p" as string]: "0", ["--ink" as string]: s.ink, ["--glow" as string]: s.glow }}
       >
         {/* Lueur qui suit les étapes */}
         <div
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[120vmax] w-[120vmax] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70 transition-[background] duration-700"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[120vmax] w-[120vmax] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70"
           style={{ background: `radial-gradient(circle at 60% 45%, ${s.glow} 0%, transparent 45%)` }}
         />
 
         {/* Objets 3D flottants (CSS pur, aucune image) */}
         <Shapes ink={s.ink} />
 
-        {/* Grain discret façon affiche */}
-        <div aria-hidden className="pp-grain pointer-events-none absolute inset-0" />
 
         <div className="relative mx-auto flex h-full max-w-6xl flex-col px-4 pt-20 pb-24 sm:pb-16 lg:flex-row lg:items-center lg:gap-12">
           {/* Titres : un seul visible à la fois, révélé par un rideau */}
@@ -147,11 +145,11 @@ export default function Scrolly() {
                 <div
                   key={i}
                   aria-hidden={!on}
-                  className={`absolute inset-0 flex flex-col justify-center transition-[opacity,transform,clip-path] duration-700 ease-[cubic-bezier(.2,.8,.2,1)] motion-reduce:transition-none ${
+                  className={`absolute inset-0 flex flex-col justify-center transition-[opacity,transform,clip-path] duration-500 ease-[cubic-bezier(.2,.8,.2,1)] will-change-[opacity,transform] motion-reduce:transition-none ${
                     on ? "opacity-100" : "pointer-events-none opacity-0"
                   }`}
                   style={{
-                    transform: on ? "none" : i < active ? "translateY(-40px) scale(.96)" : "translateY(40px) scale(.96)",
+                    transform: on ? "none" : i < active ? "translateY(-32px)" : "translateY(32px)",
                     clipPath: on ? "inset(0 0 0 0)" : i < active ? "inset(0 0 100% 0)" : "inset(100% 0 0 0)",
                   }}
                 >

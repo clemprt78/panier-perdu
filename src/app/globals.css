@@ -54,8 +54,20 @@ body {
 }
 
 /* ---------- Page d'accueil : slides plein écran ---------- */
-html:has([data-home-slides]) {
-  scroll-snap-type: y proximity;
+/* Aimantation des slides seulement sur ordinateur : sur téléphone, le défilement reste libre et fluide */
+@media (min-width: 1024px) and (pointer: fine) {
+  html:has([data-home-slides]) {
+    scroll-snap-type: y proximity;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 .pp-stage {
@@ -67,6 +79,17 @@ html:has([data-home-slides]) {
 .pp-par {
   transform: translate3d(0, calc(var(--p) * var(--depth, 60px) * -1), 0) rotate(calc(var(--p) * 18deg));
   will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Apparition douce des écrans (diagnostic, espace client) */
+.pp-enter {
+  animation: pp-rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pp-enter {
+    animation: none !important;
+  }
 }
 
 .pp-marquee {
