@@ -7,7 +7,7 @@ import { SITE } from "@/lib/site";
 const FAQ = [
   {
     q: "Est-ce que ça marche pour ma boutique ?",
-    a: "Panier Perdu est fait pour les boutiques Shopify de 10 à 150 commandes par mois. Il relance les clients qui ont laissé leur email au moment du paiement. Pas sur Shopify ? Écris-nous avant de payer.",
+    a: "Panier Perdu fonctionne avec toutes les boutiques Shopify. Il relance les clients qui ont laissé leur email au moment du paiement. Pas sur Shopify ? Écris-nous avant de payer.",
   },
   {
     q: "Combien de temps ça me prend ?",

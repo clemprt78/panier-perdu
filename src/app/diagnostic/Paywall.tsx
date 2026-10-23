@@ -124,7 +124,7 @@ export default function Paywall({ a }: { a: Answers }) {
       <section className="mt-10">
         <h2 className="font-display text-3xl uppercase">Questions fréquentes</h2>
         <Faq q="Est-ce que ça marche pour ma boutique ?">
-          Panier Perdu est fait pour les boutiques Shopify de 10 à 150 commandes par mois. Il relance les clients qui ont
+          Panier Perdu fonctionne avec toutes les boutiques Shopify. Il relance les clients qui ont
           laissé leur email au moment du paiement. Si ta boutique n&apos;est pas sur Shopify, écris-nous avant de payer.
         </Faq>
         <Faq q="Combien de temps ça me prend ?">
