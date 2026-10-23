@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   BASKET,
@@ -15,6 +14,19 @@ import {
   type Answers,
 } from "@/lib/diagnostic";
 import Paywall from "./Paywall";
+import Logo from "@/components/Logo";
+import { PosterTitle } from "@/components/PosterTitle";
+
+// Même univers que l'accueil : un fond plein par étape, des titres en relief.
+const THEMES = [
+  { bg: "#eadfcc", ink: "#1f3d2b" },
+  { bg: "#c9c1f5", ink: "#2b2166" },
+  { bg: "#c6e0f4", ink: "#0f3550" },
+  { bg: "#cbe9d4", ink: "#1f3d2b" },
+  { bg: "#eadfcc", ink: "#1f3d2b" },
+  { bg: "#f6f2ea", ink: "#1f3d2b" },
+] as const;
+
 
 type Step = 0 | 1 | 2 | 3 | 4 | 5;
 type Partial = { orders?: Answers["orders"]; basket?: Answers["basket"]; today?: Answers["today"]; shop: string };
@@ -73,19 +85,20 @@ export default function Funnel() {
   const answers = complete ? ({ orders: a.orders, basket: a.basket, today: a.today, shop: a.shop } as Answers) : null;
 
   return (
-    <main className="flex-1 px-4 pt-5 pb-12">
+    <main
+      className="min-h-[100svh] flex-1 px-4 pb-12 transition-colors duration-700 motion-reduce:transition-none"
+      style={{ background: THEMES[step].bg }}
+    >
       <div className="mx-auto max-w-2xl">
-        <header className="flex items-center justify-between">
-          <Link href="/" className="font-display text-xl uppercase tracking-wide text-ink py-2">
-            Panier Perdu
-          </Link>
+        <header className="flex h-16 items-center justify-between">
+          <Logo />
           {step > 0 && (
             <button
               type="button"
               onClick={() => go((step - 1) as Step)}
-              className="py-2 pl-4 text-sm text-muted underline underline-offset-4"
+              className="rounded-full border-2 border-ink/20 px-4 py-2 text-sm font-semibold text-ink hover:border-ink"
             >
-              Retour
+              ← Retour
             </button>
           )}
         </header>
@@ -93,6 +106,7 @@ export default function Funnel() {
         {step <= 2 && (
           <Question
             index={step}
+            ink={THEMES[step].ink}
             selected={a[QUESTIONS[step].key]}
             onPick={(id) => {
               setA((prev) => ({ ...prev, [QUESTIONS[step].key]: id }));
@@ -101,9 +115,9 @@ export default function Funnel() {
           />
         )}
 
-        {step === 3 && answers && <Result a={answers} onNext={() => go(4)} />}
+        {step === 3 && answers && <Result a={answers} ink={THEMES[3].ink} onNext={() => go(4)} />}
         {step === 4 && answers && (
-          <Preview a={answers} setShop={(shop) => setA((p) => ({ ...p, shop }))} onNext={() => go(5)} />
+          <Preview a={answers} ink={THEMES[4].ink} setShop={(shop) => setA((p) => ({ ...p, shop }))} onNext={() => go(5)} />
         )}
         {step === 5 && answers && <Paywall a={answers} />}
 
@@ -122,44 +136,63 @@ export default function Funnel() {
 
 function Question({
   index,
+  ink,
   selected,
   onPick,
 }: {
   index: number;
+  ink: string;
   selected?: string;
   onPick: (id: string) => void;
 }) {
   const q = QUESTIONS[index];
   return (
-    <section className="mt-6">
+    <section className="mt-4 sm:mt-10">
       <div className="flex items-center gap-3">
         <div
-          className="h-2 flex-1 rounded-full bg-paper-deep overflow-hidden"
+          className="h-2 flex-1 overflow-hidden rounded-full bg-white/50"
           role="progressbar"
           aria-valuemin={1}
           aria-valuemax={3}
           aria-valuenow={index + 1}
           aria-label="Progression"
         >
-          <div className="h-full bg-bottle transition-all" style={{ width: `${((index + 1) / 3) * 100}%` }} />
+          <div className="h-full rounded-full transition-all" style={{ width: `${((index + 1) / 3) * 100}%`, background: ink }} />
         </div>
-        <span className="text-sm text-muted num">{index + 1}/3</span>
+        <span className="font-poster text-lg num" style={{ color: ink }}>
+          0{index + 1}<span className="opacity-40"> / 03</span>
+        </span>
       </div>
 
-      <h1 className="mt-8 font-display uppercase text-[2.3rem] leading-tight">{q.title}</h1>
-      <p className="mt-2 text-muted">{q.hint}</p>
+      <PosterTitle ink={ink} className="mt-8">
+        {q.title}
+      </PosterTitle>
+      <p className="mt-3 font-medium" style={{ color: ink }}>
+        {q.hint}
+      </p>
 
       <div className="mt-6 flex flex-col gap-3">
-        {q.options.map((o) => (
+        {q.options.map((o, i) => (
           <button
             key={o.id}
             type="button"
             onClick={() => onPick(o.id)}
-            className={`min-h-14 rounded-lg border-2 px-4 py-3 text-left text-lg font-medium transition-colors ${
-              selected === o.id ? "border-bottle bg-bottle text-white" : "border-line bg-white hover:border-bottle"
+            className={`group flex min-h-16 items-center gap-4 rounded-2xl px-4 py-3 text-left text-lg font-semibold shadow-[0_12px_30px_-18px_rgba(0,0,0,0.5)] transition-all hover:-translate-y-0.5 active:scale-[0.99] ${
+              selected === o.id ? "bg-ink text-white" : "bg-[#fffdf8] text-ink"
             }`}
           >
-            {o.label}
+            <span
+              className={`grid h-9 w-9 shrink-0 place-items-center rounded-full font-poster text-base ${
+                selected === o.id ? "bg-white text-ink" : "text-white"
+              }`}
+              style={selected === o.id ? undefined : { background: ink }}
+            >
+              {"ABCD"[i]}
+            </span>
+            <span className="flex-1">{o.label}</span>
+            <span className="text-xl opacity-30 transition-transform group-hover:translate-x-1" aria-hidden>
+              →
+            </span>
           </button>
         ))}
       </div>
@@ -167,7 +200,7 @@ function Question({
   );
 }
 
-function Result({ a, onNext }: { a: Answers; onNext: () => void }) {
+function Result({ a, ink, onNext }: { a: Answers; ink: string; onNext: () => void }) {
   const r = compute(a);
   const today = TODAY.find((t) => t.id === a.today)!;
   const price = 39;
@@ -181,14 +214,15 @@ function Result({ a, onNext }: { a: Answers; onNext: () => void }) {
         : `L'email par défaut de Shopify en ramène environ ${euros(r.recoveredToday)} par mois. Un seul message, générique, sans seconde chance.`;
 
   return (
-    <section className="mt-6">
-      <p className="text-sm font-medium uppercase tracking-wider text-muted">Ton résultat</p>
-      <h1 className="mt-2 font-display uppercase text-[2.3rem] leading-tight">
-        Chaque mois, environ <span className="text-brick num">{euros(r.lostEuros)}</span> restent dans des paniers
-        abandonnés.
-      </h1>
+    <section className="mt-4 sm:mt-10">
+      <p className="text-[0.8rem] font-semibold uppercase tracking-[0.2em]" style={{ color: ink }}>
+        Ton résultat
+      </p>
+      <PosterTitle ink={ink} className="mt-3">
+        Chaque mois, environ {euros(r.lostEuros)} restent dans tes paniers abandonnés.
+      </PosterTitle>
 
-      <div className="ticket mt-6 px-5">
+      <div className="ticket mt-6 px-5 shadow-[0_30px_60px_-25px_rgba(0,0,0,0.45)]">
         <dl className="space-y-2 num">
           <TRow k="Tes commandes par mois" v={`≈ ${r.orders}`} />
           <TRow k="Paniers abandonnés" v={`≈ ${r.abandoned}`} />
@@ -205,7 +239,7 @@ function Result({ a, onNext }: { a: Answers; onNext: () => void }) {
         <p className="mt-1 text-right text-sm text-muted num">par mois, soit ≈ {r.ordersGained} commandes</p>
       </div>
 
-      <p className="mt-5 leading-relaxed">{todayText}</p>
+      <p className="mt-6 leading-relaxed text-ink">{todayText}</p>
 
       {paysOff ? (
         <p className="mt-3 leading-relaxed">
@@ -216,7 +250,7 @@ function Result({ a, onNext }: { a: Answers; onNext: () => void }) {
           .
         </p>
       ) : (
-        <p className="mt-3 leading-relaxed rounded-lg bg-paper-deep p-4">
+        <p className="mt-3 rounded-2xl bg-white/70 p-4 leading-relaxed">
           Franchement : à ton volume actuel, l&apos;estimation ({euros(r.gain)}/mois) ne couvre pas encore les {price}&nbsp;€
           de l&apos;abonnement. Prends quand même la relance gratuite de l&apos;écran suivant et colle-la dans Shopify : elle
           te servira dès aujourd&apos;hui.
@@ -253,7 +287,7 @@ function TRow({ k, v }: { k: string; v: string }) {
   );
 }
 
-function Preview({ a, setShop, onNext }: { a: Answers; setShop: (s: string) => void; onNext: () => void }) {
+function Preview({ a, ink, setShop, onNext }: { a: Answers; ink: string; setShop: (s: string) => void; onNext: () => void }) {
   const r1 = relance1(a);
   const r2 = relance2(a);
   const [copied, setCopied] = useState(false);
@@ -267,11 +301,13 @@ function Preview({ a, setShop, onNext }: { a: Answers; setShop: (s: string) => v
   };
 
   return (
-    <section className="mt-6">
-      <p className="text-sm font-medium uppercase tracking-wider text-muted">Ton avant-goût, gratuit</p>
-      <h1 className="mt-2 font-display uppercase text-[2.3rem] leading-tight">
-        Ta première relance est prête. Copie-la, elle est à toi.
-      </h1>
+    <section className="mt-4 sm:mt-10">
+      <p className="text-[0.8rem] font-semibold uppercase tracking-[0.2em]" style={{ color: ink }}>
+        Ton avant-goût, gratuit
+      </p>
+      <PosterTitle ink={ink} className="mt-3">
+        Ta première relance est prête. Elle est à toi.
+      </PosterTitle>
 
       <label className="mt-6 block">
         <span className="text-sm font-medium">Nom de ta boutique</span>
@@ -280,7 +316,7 @@ function Preview({ a, setShop, onNext }: { a: Answers; setShop: (s: string) => v
           onChange={(e) => setShop(e.target.value.slice(0, 40))}
           placeholder="Ex. : Atelier Lune"
           autoComplete="organization"
-          className="mt-1 block h-12 w-full rounded-lg border-2 border-line bg-white px-3 text-base focus:border-bottle focus:outline-none"
+          className="mt-1 block h-12 w-full rounded-2xl border-2 border-transparent bg-[#fffdf8] px-4 text-base shadow-[0_10px_24px_-18px_rgba(0,0,0,0.5)] focus:border-ink focus:outline-none"
         />
       </label>
 
@@ -288,7 +324,7 @@ function Preview({ a, setShop, onNext }: { a: Answers; setShop: (s: string) => v
       <button
         type="button"
         onClick={copy}
-        className="mt-3 h-12 w-full rounded-lg border-2 border-bottle font-semibold text-bottle active:bg-bottle active:text-white"
+        className="mt-3 h-12 w-full rounded-full border-2 border-ink bg-transparent font-semibold text-ink hover:bg-ink hover:text-white"
       >
         {copied ? "Copiée ✓" : "Copier la relance 1"}
       </button>
@@ -299,7 +335,7 @@ function Preview({ a, setShop, onNext }: { a: Answers; setShop: (s: string) => v
       <div className="relative mt-8" aria-label="Contenu verrouillé">
         <div className="pointer-events-none select-none blur-[5px]" aria-hidden="true">
           <EmailCard email={r2} label="Relance 2" />
-          <div className="mt-4 rounded-lg border border-line bg-white p-4">
+          <div className="mt-4 rounded-2xl bg-[#fffdf8] p-4">
             <p className="font-semibold">Les 4 réglages pour {compute(a).orders} commandes/mois</p>
             <ul className="mt-2 list-disc pl-5 text-sm text-muted space-y-1">
               {SETTINGS.map((s) => (
@@ -309,7 +345,7 @@ function Preview({ a, setShop, onNext }: { a: Answers; setShop: (s: string) => v
           </div>
         </div>
         <div className="absolute inset-0 flex items-center justify-center p-4">
-          <div className="rounded-lg bg-ink/90 px-4 py-3 text-center text-white">
+          <div className="rounded-2xl bg-ink/90 px-5 py-4 text-center text-white shadow-xl">
             <p className="font-semibold">Relance 2 avec code de réduction + 4 réglages</p>
             <p className="text-sm text-white/80">Inclus dans ton plan complet</p>
           </div>
@@ -329,7 +365,7 @@ function Preview({ a, setShop, onNext }: { a: Answers; setShop: (s: string) => v
 
 export function EmailCard({ email, label }: { email: { when: string; subject: string; body: string }; label: string }) {
   return (
-    <article className="mt-5 rounded-lg border border-line bg-white">
+    <article className="mt-5 overflow-hidden rounded-2xl bg-[#fffdf8] shadow-[0_20px_44px_-28px_rgba(0,0,0,0.5)]">
       <div className="flex items-baseline justify-between gap-3 border-b border-line px-4 py-3">
         <span className="font-semibold">{label}</span>
         <span className="text-right text-xs text-muted">{email.when}</span>

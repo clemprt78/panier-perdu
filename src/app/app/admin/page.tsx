@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Logo from "@/components/Logo";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { requireOwner } from "@/lib/server/owner";
@@ -15,9 +15,7 @@ export default function AdminPage() {
     <main className="flex-1 px-4 pt-5 pb-12">
       <div className="mx-auto max-w-2xl">
         <header className="flex items-center justify-between">
-          <Link href="/app" className="font-display text-xl uppercase tracking-wide text-ink py-2">
-            Panier Perdu
-          </Link>
+          <Logo href="/app" />
           <a href="/app" className="py-2 pl-4 text-sm text-muted underline underline-offset-4">
             Mon espace
           </a>

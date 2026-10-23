@@ -17,6 +17,7 @@ import {
   type PlanId,
 } from "@/lib/diagnostic";
 import { SITE } from "@/lib/site";
+import { PosterTitle } from "@/components/PosterTitle";
 
 const pk = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 let stripePromise: Promise<Stripe | null> | null = null;
@@ -28,12 +29,12 @@ export default function Paywall({ a }: { a: Answers }) {
   const monthly = PLANS[plan].interval === "year" ? PLANS[plan].cents / 100 / 12 : PLANS[plan].cents / 100;
 
   return (
-    <section className="mt-6">
+    <section className="mt-4 sm:mt-10">
       {/* 1. Ce qui a été fait pour la personne */}
-      <p className="inline-block rounded bg-bottle px-2 py-1 text-xs font-semibold uppercase tracking-wider text-white">
+      <p className="inline-block rounded-full bg-bottle px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white">
         Satisfait ou remboursé {GUARANTEE.days} jours
       </p>
-      <h1 className="mt-3 font-display uppercase text-[2.5rem] leading-tight">Voilà ton plan, prêt.</h1>
+      <PosterTitle ink="#1f3d2b" className="mt-3">Voilà ton plan, prêt.</PosterTitle>
       <ul className="mt-4 space-y-2">
         <Check>Relance 1, écrite pour {shopName(a)}</Check>
         <Check>Relance 2 avec code de réduction de 10 %</Check>
@@ -43,14 +44,14 @@ export default function Paywall({ a }: { a: Answers }) {
 
       {/* 2. Ce que ça rapporte, comparé au prix */}
       <div className="mt-6 grid grid-cols-2 gap-3 num">
-        <div className="rounded-lg bg-bottle p-4 text-white">
+        <div className="rounded-2xl bg-bottle p-4 text-white shadow-[0_20px_40px_-24px_rgba(31,61,43,0.8)]">
           <p className="text-sm text-white/80">Récupéré en plus, estimation</p>
-          <p className="mt-1 font-display text-3xl">+{euros(r.gain)}</p>
+          <p className="mt-1 font-display text-4xl">+{euros(r.gain)}</p>
           <p className="text-sm text-white/80">par mois</p>
         </div>
-        <div className="rounded-lg border-2 border-line bg-white p-4">
+        <div className="rounded-2xl border border-line bg-white p-4">
           <p className="text-sm text-muted">Panier Perdu</p>
-          <p className="mt-1 font-display text-3xl">{euros(monthly)}</p>
+          <p className="mt-1 font-display text-4xl">{euros(monthly)}</p>
           <p className="text-sm text-muted">par mois</p>
         </div>
       </div>
@@ -66,12 +67,12 @@ export default function Paywall({ a }: { a: Answers }) {
             return (
               <label
                 key={id}
-                className={`relative flex cursor-pointer items-center gap-3 rounded-lg border-2 bg-white px-4 py-4 ${
-                  active ? "border-brick" : "border-line"
-                } ${featured ? "shadow-[0_0_0_4px_rgba(217,84,30,0.12)]" : ""}`}
+                className={`relative flex cursor-pointer items-center gap-3 rounded-2xl border-2 bg-white px-4 py-4 transition-colors ${
+                  active ? "border-ink" : "border-line hover:border-ink/40"
+                } ${featured ? "shadow-[0_18px_40px_-26px_rgba(0,0,0,0.6)]" : ""}`}
               >
                 {featured && (
-                  <span className="absolute -top-3 left-4 rounded bg-brick px-2 py-0.5 text-xs font-semibold text-white">
+                  <span className="absolute -top-3 left-4 rounded-full bg-[#ff6b1a] px-3 py-0.5 text-xs font-semibold text-ink">
                     Recommandé
                   </span>
                 )}
@@ -81,7 +82,7 @@ export default function Paywall({ a }: { a: Answers }) {
                   value={id}
                   checked={active}
                   onChange={() => setPlan(id)}
-                  className="h-5 w-5 accent-[#d9541e]"
+                  className="h-5 w-5 accent-[#1b1d1a]"
                 />
                 <span className="flex-1">
                   <span className="block font-semibold">{p.name}</span>
@@ -101,7 +102,7 @@ export default function Paywall({ a }: { a: Answers }) {
       </fieldset>
 
       {/* 4. La garantie, en clair */}
-      <div className="mt-6 rounded-lg border-2 border-bottle bg-white p-4">
+      <div className="mt-6 rounded-2xl border-2 border-bottle bg-white p-4">
         <p className="font-semibold text-bottle">Garantie satisfait ou remboursé : {GUARANTEE.days} jours</p>
         <p className="mt-1 text-sm leading-relaxed">
           Si Panier Perdu ne te convient pas dans les {GUARANTEE.days} jours qui suivent ton paiement, envoie{" "}
@@ -120,7 +121,7 @@ export default function Paywall({ a }: { a: Answers }) {
 
       {/* 7. Les quatre objections */}
       <section className="mt-10">
-        <h2 className="font-display text-2xl">Questions fréquentes</h2>
+        <h2 className="font-display text-3xl uppercase">Questions fréquentes</h2>
         <Faq q="Est-ce que ça marche pour ma boutique ?">
           Panier Perdu est fait pour les boutiques Shopify de 10 à 150 commandes par mois. Il relance les clients qui ont
           laissé leur email au moment du paiement. Si ta boutique n&apos;est pas sur Shopify, écris-nous avant de payer.
@@ -186,7 +187,7 @@ function Checkout({ plan, a }: { plan: PlanId; a: Answers }) {
 
   if (!pk) {
     return (
-      <p className="mt-4 rounded-lg bg-paper-deep p-4 text-sm">
+      <p className="mt-4 rounded-2xl bg-paper-deep p-4 text-sm">
         Le paiement n&apos;est pas encore branché sur ce site. Reviens dans quelques minutes.
       </p>
     );
@@ -194,7 +195,7 @@ function Checkout({ plan, a }: { plan: PlanId; a: Answers }) {
 
   if (error) {
     return (
-      <div className="mt-4 rounded-lg border-2 border-brick bg-white p-4" role="alert">
+      <div className="mt-4 rounded-2xl border-2 border-brick bg-white p-4" role="alert">
         <p className="font-semibold">Le paiement n&apos;a pas pu s&apos;ouvrir.</p>
         <p className="mt-1 text-sm text-muted">Rien n&apos;a été débité. Recharge la page pour réessayer.</p>
         <button
@@ -209,7 +210,7 @@ function Checkout({ plan, a }: { plan: PlanId; a: Answers }) {
   }
 
   return (
-    <div className="mt-4 overflow-hidden rounded-lg bg-white">
+    <div className="mt-4 overflow-hidden rounded-2xl bg-white shadow-[0_20px_44px_-30px_rgba(0,0,0,0.5)]">
       <EmbeddedCheckoutProvider stripe={getStripe()} options={{ fetchClientSecret }}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>

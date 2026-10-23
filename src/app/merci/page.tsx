@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Logo from "@/components/Logo";
 import { Suspense } from "react";
 import Footer from "@/components/Footer";
 import { EmailCard } from "@/app/diagnostic/Funnel";
@@ -14,9 +15,7 @@ export default function MerciPage({ searchParams }: PageProps<"/merci">) {
     <>
       <main className="flex-1 px-4 pt-5 pb-12">
         <div className="mx-auto max-w-2xl">
-          <Link href="/" className="font-display text-xl uppercase tracking-wide text-ink py-2 inline-block">
-            Panier Perdu
-          </Link>
+          <Logo href="/" />
           <Suspense fallback={<p className="mt-10 text-muted">Vérification de ton paiement…</p>}>
             <Delivery searchParams={searchParams} />
           </Suspense>

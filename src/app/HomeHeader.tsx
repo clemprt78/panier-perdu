@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Logo from "@/components/Logo";
 
 // Transparent sur les slides, puis un fond clair dès qu'on arrive au contenu.
 export default function HomeHeader() {
@@ -28,17 +29,18 @@ export default function HomeHeader() {
         solid ? "bg-paper/90 shadow-[0_1px_0_var(--color-line)] backdrop-blur-md" : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="font-poster text-xl uppercase tracking-wide text-ink">
-          Panier Perdu
-        </Link>
-        <nav className="flex items-center gap-5 text-sm font-medium text-ink">
-          <a href="#tarifs" className="hidden py-2 hover:underline sm:inline">Tarifs</a>
-          <a href="#faq" className="hidden py-2 hover:underline sm:inline">Questions</a>
-          <Link href="/connexion" className="py-2 hover:underline">Connexion</Link>
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">
+        <Logo />
+        <nav className="flex items-center gap-2 sm:gap-3">
+          <Link
+            href="/connexion"
+            className="rounded-full border-2 border-ink px-4 py-2 text-sm font-semibold text-ink hover:bg-ink hover:text-white"
+          >
+            Espace client
+          </Link>
           <Link
             href="/diagnostic"
-            className="hidden rounded-full bg-ink px-5 py-2.5 font-semibold text-white hover:bg-black sm:inline-block"
+            className="hidden rounded-full border-2 border-ink bg-ink px-5 py-2 text-sm font-semibold text-white hover:bg-black sm:inline-block"
           >
             Commencer, c&apos;est gratuit
           </Link>
